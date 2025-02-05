@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png">
+    <title>Python Programming</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(45deg, #ff6a00, #ffb200);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            transition: background 0.5s ease-in-out;
+        }
+
+        .container {
+            background: #333;
+            width: 100%;
+            max-width: 800px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: fadeIn 1s ease;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #fff;
+            margin-bottom: 30px;
+            animation: slideInUp 1s ease-out;
+        }
+
+        #question {
+            font-size: 22px;
+            margin-bottom: 20px;
+            animation: fadeIn 1.5s ease;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ffb200;
+            background-color: #333;
+            color: #fff;
+            font-size: 16px;
+            resize: none;
+            margin-bottom: 20px;
+            transition: border 0.3s ease-in-out;
+        }
+
+        textarea:focus {
+            border-color: #ff6a00;
+            box-shadow: 0 0 10px rgba(255, 106, 0, 0.6);
+        }
+
+        button {
+            background-color: #ff6a00;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s ease;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 106, 0, 0.6);
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #answer {
+            margin-top: 20px;
+            padding: 15px;
+            background: #444;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            transition: transform 0.3s ease;
+        }
+
+        #answer.hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .responsive-container {
+            width: 100%;
+            padding: 20px;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            #question {
+                font-size: 18px;
+            }
+
+            button {
+                width: 100%;
+                padding: 12px;
+            }
+
+            textarea {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container responsive-container">
+        <h1>Python Programming 20 questions</h1>
+        <div id="question-container">
+            <p id="question">Loading...</p>
+            <textarea id="answer-input" placeholder="Type your answer here..."></textarea>
+            <button id="show-answer-btn">Show Answer</button>
+            <button id="next-question-btn" disabled>Next Question</button>
+            <div id="answer" class="hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Reverse a string without using built-in functions.",
+                answer: `def reverse_string(s):
+    return s[::-1]`
+            },
+            {
+                question: "Check if a number is prime.",
+                answer: `def is_prime(num):
+    if num < 2:
+        return False
+    for i in range(2, int(num ** 0.5) + 1):
+        if num % i == 0:
+            return False
+    return True`
+            },
+            {
+                question: "Find the factorial of a number.",
+                answer: `def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        return n * factorial(n - 1)`
+            },
+            {
+                question: "Check if a string is a palindrome.",
+                answer: `def is_palindrome(s):
+    return s == s[::-1]`
+            },
+            {
+                question: "Find the maximum number in a list.",
+                answer: `def find_max(lst):
+    return max(lst)`
+            },
+            {
+                question: "Count the frequency of each character in a string.",
+                answer: `from collections import Counter
+
+def count_char_frequency(s):
+    return dict(Counter(s))`
+            },
+            {
+                question: "Find the sum of digits of a number.",
+                answer: `def sum_of_digits(num):
+    return sum(int(digit) for digit in str(num))`
+            },
+            {
+                question: "Check if a list is sorted.",
+                answer: `def is_sorted(lst):
+    return lst == sorted(lst)`
+            },
+            {
+                question: "Merge two lists into a dictionary.",
+                answer: `def merge_lists_to_dict(keys, values):
+    return dict(zip(keys, values))`
+            },
+            {
+                question: "Find the GCD of two numbers.",
+                answer: `import math
+
+def gcd(a, b):
+    return math.gcd(a, b)`
+            },
+            {
+                question: "Generate Fibonacci series up to N terms.",
+                answer: `def fibonacci(n):
+    a, b = 0, 1
+    series = []
+    for _ in range(n):
+        series.append(a)
+        a, b = b, a + b
+    return series`
+            },
+            {
+                question: "Find if a number is an Armstrong number.",
+                answer: `def is_armstrong(num):
+    num_str = str(num)
+    length = len(num_str)
+    return num == sum(int(digit) ** length for digit in num_str)`
+            },
+            {
+                question: "Remove duplicates from a list.",
+                answer: `def remove_duplicates(lst):
+    return list(set(lst))`
+            },
+            {
+                question: "Find the intersection of two lists.",
+                answer: `def intersection(lst1, lst2):
+    return list(set(lst1) & set(lst2))`
+            },
+            {
+                question: "Sort a list of tuples based on the second element.",
+                answer: `def sort_by_second_element(lst):
+    return sorted(lst, key=lambda x: x[1])`
+            },
+            {
+                question: "Count vowels in a string.",
+                answer: `def count_vowels(s):
+    vowels = 'aeiou'
+    return sum(1 for char in s if char in vowels)`
+            },
+            {
+                question: "Find the length of a string without using len().",
+                answer: `def string_length(s):
+    count = 0
+    for char in s:
+        count += 1
+    return count`
+            },
+            {
+                question: "Convert a list of strings into a single string.",
+                answer: `def list_to_string(lst):
+    return ''.join(lst)`
+            },
+            {
+                question: "Check if a number is a perfect number.",
+                answer: `def is_perfect(num):
+    divisors = [i for i in range(1, num) if num % i == 0]
+    return sum(divisors) == num`
+            },
+            {
+                question: "Find the second largest number in a list.",
+                answer: `def second_largest(lst):
+    unique_lst = list(set(lst))
+    unique_lst.sort()
+    return unique_lst[-2]`
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+
+        const questionContainer = document.getElementById('question-container');
+        const questionElem = document.getElementById('question');
+        const answerElem = document.getElementById('answer');
+        const answerInput = document.getElementById('answer-input');
+        const showAnswerBtn = document.getElementById('show-answer-btn');
+        const nextQuestionBtn = document.getElementById('next-question-btn');
+
+        function loadQuestion(index) {
+            const question = questions[index];
+            questionElem.textContent = question.question;
+            answerElem.textContent = '';
+            answerInput.value = '';
+            answerElem.classList.add('hidden');
+            nextQuestionBtn.disabled = false;
+        }
+
+        function showAnswer() {
+            answerElem.textContent = questions[currentQuestionIndex].answer;
+            answerElem.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex === questions.length - 1) {
+                alert("Congratulations! You've completed the quiz.");
+                nextQuestionBtn.disabled = true;
+            } else {
+                currentQuestionIndex++;
+                loadQuestion(currentQuestionIndex);
+            }
+        }
+
+        showAnswerBtn.addEventListener('click', showAnswer);
+        nextQuestionBtn.addEventListener('click', nextQuestion);
+
+        loadQuestion(currentQuestionIndex);
+    </script>
+</body>
+</html>

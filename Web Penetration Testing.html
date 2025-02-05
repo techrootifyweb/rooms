@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png">
+    <title>Web Penetration Testing</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border: 2px solid #0f0;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px #0f0;
+            width: 90%;
+            max-width: 600px;
+        }
+        h1 { font-size: 24px; margin-bottom: 15px; text-shadow: 0px 0px 5px #0f0; }
+        #question { font-size: 18px; margin-bottom: 20px; }
+        button {
+            background: #0f0; color: #000; padding: 12px; border: none; cursor: pointer;
+            font-size: 16px; width: 100%; margin: 8px 0; border-radius: 5px;
+            font-weight: bold; transition: 0.3s ease-in-out;
+        }
+        button:hover { background: #00ff00a1; transform: scale(1.05); }
+        #result { font-size: 18px; margin-top: 15px; font-weight: bold; }
+        #score { font-size: 20px; margin-top: 20px; font-weight: bold; text-shadow: 0px 0px 5px #0f0; }
+        #retry { display: none; background: red; color: white; }
+        #retry:hover { background: darkred; }
+        @media (max-width: 600px) {
+            h1 { font-size: 20px; }
+            #question { font-size: 16px; }
+            button { font-size: 14px; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Web Penetration Testing 30 Quizzes</h1>
+        <p id="question">Loading...</p>
+        <button onclick="checkAnswer(0)" id="option0"></button>
+        <button onclick="checkAnswer(1)" id="option1"></button>
+        <button onclick="checkAnswer(2)" id="option2"></button>
+        <button onclick="checkAnswer(3)" id="option3"></button>
+        <p id="result"></p>
+        <p id="score"></p>
+        <button id="retry" onclick="restartQuiz()">Try Again</button>
+    </div>
+
+    <script>
+        const quiz = [
+            { question: "What is the first step in a web penetration test?", options: ["Exploitation", "Reconnaissance", "Privilege Escalation", "Maintaining Access"], answer: 1 },
+            { question: "Which tool is commonly used for SQL Injection testing?", options: ["Metasploit", "Wireshark", "sqlmap", "Burp Suite"], answer: 2 },
+            { question: "What is Cross-Site Scripting (XSS)?", options: ["SQL Injection technique", "Server Misconfiguration", "Client-side Code Injection", "Firewall Bypass"], answer: 2 },
+            { question: "What is the main purpose of Burp Suite?", options: ["Network Scanning", "Web Application Security Testing", "Malware Analysis", "Packet Sniffing"], answer: 1 },
+            { question: "Which HTTP method is most commonly used for submitting forms?", options: ["GET", "POST", "PUT", "DELETE"], answer: 1 },
+            { question: "Which type of attack exploits a user’s established session to gain unauthorized access?", options: ["Cross-Site Scripting", "Session Hijacking", "SQL Injection", "Brute Force"], answer: 1 },
+            { question: "Which port is commonly used for HTTP?", options: ["21", "22", "80", "443"], answer: 2 },
+            { question: "What does the term 'SQL Injection' refer to?", options: ["Attacking Database", "Server Misconfiguration", "Password Cracking", "Exploiting Input Fields"], answer: 3 },
+            { question: "What is a common vulnerability found in web applications?", options: ["Buffer Overflow", "Cross-Site Scripting (XSS)", "Race Conditions", "Privilege Escalation"], answer: 1 },
+            { question: "What is the purpose of the OWASP Top 10?", options: ["To rank top hackers", "To outline the most critical web application security risks", "To guide developers in code optimization", "To track vulnerabilities"], answer: 1 },
+            { question: "What is an example of a client-side attack?", options: ["Cross-Site Scripting", "SQL Injection", "Directory Traversal", "Denial of Service"], answer: 0 },
+            { question: "Which of these is a web application firewall?", options: ["Wireshark", "Burp Suite", "ModSecurity", "Snort"], answer: 2 },
+            { question: "What does the term 'phishing' refer to?", options: ["Malware spreading via email", "Web Application Security", "Social Engineering Attack", "Denial of Service attack"], answer: 2 },
+            { question: "Which of these is a method for securing sensitive data in a web application?", options: ["Encryption", "SQL Injection", "Packet Sniffing", "Denial of Service"], answer: 0 },
+            { question: "What is the default port for HTTPS?", options: ["80", "443", "8080", "22"], answer: 1 },
+            { question: "Which command is used to scan for open ports?", options: ["netstat", "nmap", "ps aux", "lsof"], answer: 1 },
+            { question: "Which of the following is a type of brute-force attack?", options: ["Password Cracking", "SQL Injection", "Cross-Site Request Forgery", "Man-in-the-Middle"], answer: 0 },
+            { question: "What does the term 'payload' refer to in web security?", options: ["A type of firewall", "A malicious code used in an attack", "An encrypted message", "A type of encryption"], answer: 1 },
+            { question: "What is Cross-Site Request Forgery (CSRF)?", options: ["A session hijacking attack", "An attack that forces a user to execute unwanted actions", "SQL Injection attack", "Buffer Overflow attack"], answer: 1 },
+            { question: "Which of these is an example of a network security tool?", options: ["Wireshark", "Burp Suite", "Metasploit", "Netcat"], answer: 0 },
+            { question: "What is a 'zero-day' vulnerability?", options: ["A vulnerability that is publicly known", "A vulnerability with no patch available", "A patched vulnerability", "A type of attack method"], answer: 1 },
+            { question: "Which of the following tools can be used for network sniffing?", options: ["Wireshark", "Metasploit", "Burp Suite", "Nmap"], answer: 0 },
+            { question: "What is a 'Man-in-the-Middle' attack?", options: ["Intercepting and altering communication between two parties", "Brute forcing password hashes", "Injecting malicious code into a website", "Exploiting server vulnerabilities"], answer: 0 },
+            { question: "What is the primary purpose of a VPN?", options: ["Network Sniffing", "Web Application Security", "Encrypting internet traffic", "SQL Injection Prevention"], answer: 2 },
+            { question: "Which protocol is commonly used for secure communication over the internet?", options: ["HTTP", "FTP", "SSH", "HTTPS"], answer: 3 },
+            { question: "What does a Denial-of-Service (DoS) attack do?", options: ["Intercepts communication", "Infects a website with malware", "Prevents access to a server or network", "Steals sensitive data"], answer: 2 },
+            { question: "Which tool is used to exploit weaknesses in wireless networks?", options: ["Wireshark", "Kismet", "Metasploit", "sqlmap"], answer: 1 },
+            { question: "What is the most common method of securing passwords on a website?", options: ["Encryption", "Storing in plaintext", "Hashing", "Base64 encoding"], answer: 2 },
+            { question: "What is a SQL Injection attack?", options: ["Exploiting insecure input fields to manipulate a database", "Brute-forcing authentication", "Exploiting weak passwords", "Injecting malicious JavaScript"], answer: 0 },
+            { question: "What is the purpose of a Web Application Firewall (WAF)?", options: ["Encrypts web traffic", "Filters and monitors HTTP requests", "Detects phishing attacks", "Secures DNS queries"], answer: 1 }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            document.getElementById("question").textContent = quiz[currentQuestion].question;
+            for (let i = 0; i < 4; i++) {
+                document.getElementById("option" + i).textContent = quiz[currentQuestion].options[i];
+                document.getElementById("option" + i).style.display = "block";
+            }
+            document.getElementById("result").textContent = "";
+            document.getElementById("retry").style.display = "none";
+            document.getElementById("score").textContent = "";
+        }
+
+        function checkAnswer(selected) {
+            if (selected === quiz[currentQuestion].answer) {
+                document.getElementById("result").textContent = "✅ Correct!";
+                score++;
+            } else {
+                document.getElementById("result").textContent = "❌ Wrong Answer!";
+            }
+            setTimeout(() => {
+                document.getElementById("result").textContent = "";
+                currentQuestion++;
+                if (currentQuestion < quiz.length) {
+                    loadQuestion();
+                } else {
+                    showFinalResult();
+                }
+            }, 1000);
+        }
+
+        function showFinalResult() {
+            document.getElementById("question").textContent = "Quiz Completed!";
+            document.getElementById("score").textContent = `Your Score: ${score} / ${quiz.length}`;
+            
+            for (let i = 0; i < 4; i++) {
+                document.getElementById("option" + i).style.display = "none";
+            }
+
+            if (score === quiz.length) {
+                document.getElementById("score").innerHTML += "<br>🎉 Congratulations! You are a Web Pentesting Master!";
+            } else {
+                document.getElementById("retry").style.display = "block";
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
